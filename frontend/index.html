@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trust Demo – Payment Authorization</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Trust Demo: Human vs Agent Detection</h1>
+    <p>Submit a payment and open the <a href="http://localhost:8501" target="_blank">Dashboard</a> to see layer-by-layer scores. Use the simulator to mimic bot signals.</p>
+
+    <div class="grid">
+      <form id="pay" class="card">
+        <h3>Payment Form</h3>
+        <label>Beneficiary (IBAN / Account #)</label>
+        <input name="beneficiary" placeholder="AE12 3456 7890 1234 5678 901" required />
+        <label>Amount</label>
+        <input name="amount" type="number" min="1" step="1" placeholder="25000" required />
+        <button type="submit">Authorize Payment</button>
+        <div id="decision" class="decision"></div>
+      </form>
+
+      <div class="card">
+        <h3>Simulator</h3>
+        <label class="chk"><input id="sim_headless" type="checkbox" /> Simulate Headless Browser</label>
+        <label class="chk"><input id="sim_proxy" type="checkbox" /> Simulate Proxy/VPN</label>
+        <label class="chk"><input id="sim_lang_mismatch" type="checkbox" /> Accept-Language / Locale Mismatch</label>
+        <p class="muted">These flags are sent as transport/env signals to influence the <b>Bot Context</b> score.</p>
+      </div>
+    </div>
+
+    <div class="tips">
+      <h3>Try These Scenarios</h3>
+      <ul>
+        <li>Type naturally vs paste the entire beneficiary.</li>
+        <li>Vary typing speed; make mistakes and use Backspace.</li>
+        <li>Toggle <b>Headless</b> / <b>Proxy</b> / <b>Lang mismatch</b> to see <b>Bot Context</b> change.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Challenge Modal -->
+  <div id="challengeModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Step-Up: Behavioral Challenge</h3>
+      <p>Drag the blue dot along the highlighted path. Stay close to the curve until the end.</p>
+      <canvas id="challengeCanvas" width="640" height="300"></canvas>
+      <div class="modal-actions">
+        <button id="restartBtn">Restart</button>
+        <button id="cancelBtn">Cancel</button>
+      </div>
+      <div id="challengeMsg" class="muted"></div>
+    </div>
+  </div>
+
+  <script src="/telemetry.js"></script>
+  <script>
+    attachPaymentForm('pay', { collectorBase: 'http://localhost:8080' });
+  </script>
+</body>
+</html>

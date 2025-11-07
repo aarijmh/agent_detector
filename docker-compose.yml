@@ -1,0 +1,54 @@
+
+version: "3.9"
+services:
+  frontend:
+    image: nginx:alpine
+    container_name: trust_frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - collector
+
+  collector:
+    build: ./collector
+    container_name: trust_collector
+    environment:
+      - FEATURE_SVC=http://feature_svc:8000
+      - MODELS_SVC=http://models_svc:8000
+      - POLICY_SVC=http://policy_svc:8000
+      - EVENTS_FILE=/data/events.jsonl
+    ports:
+      - "8080:8000"
+    volumes:
+      - data:/data
+    depends_on:
+      - feature_svc
+      - models_svc
+      - policy_svc
+
+  feature_svc:
+    build: ./feature_svc
+    container_name: trust_feature
+
+  models_svc:
+    build: ./models_svc
+    container_name: trust_models
+
+  policy_svc:
+    build: ./policy_svc
+    container_name: trust_policy
+
+  dashboard:
+    build: ./dashboard
+    container_name: trust_dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - data:/data
+    depends_on:
+      - collector
+
+volumes:
+  data:
