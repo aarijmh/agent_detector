@@ -10,9 +10,9 @@
 <body>
   <div class="container">
     <h1>Trust Demo: Human vs Agent Detection</h1>
-    <p>Submit a payment and open the <a href="http://localhost:8501" target="_blank">Dashboard</a> to see layer-by-layer scores. Use the simulator to mimic bot signals.</p>
+    <p>Submit a payment and open the <a href="http://localhost:8501" target="_blank">Dashboard</a>. Use the simulator to mimic bot signals. A live WebSocket feed shows recent events.</p>
 
-    <div class="grid">
+    <div class="grid grid-3">
       <form id="pay" class="card">
         <h3>Payment Form</h3>
         <label>Beneficiary (IBAN / Account #)</label>
@@ -28,7 +28,13 @@
         <label class="chk"><input id="sim_headless" type="checkbox" /> Simulate Headless Browser</label>
         <label class="chk"><input id="sim_proxy" type="checkbox" /> Simulate Proxy/VPN</label>
         <label class="chk"><input id="sim_lang_mismatch" type="checkbox" /> Accept-Language / Locale Mismatch</label>
-        <p class="muted">These flags are sent as transport/env signals to influence the <b>Bot Context</b> score.</p>
+        <p class="muted">These flags are sent as env signals to influence <b>Bot Context</b>.</p>
+      </div>
+
+      <div class="card">
+        <h3>Live Events (WebSocket)</h3>
+        <div id="live" class="live"></div>
+        <p class="muted">Connecting to <code>ws://localhost:8080/ws</code> …</p>
       </div>
     </div>
 
@@ -36,8 +42,8 @@
       <h3>Try These Scenarios</h3>
       <ul>
         <li>Type naturally vs paste the entire beneficiary.</li>
-        <li>Vary typing speed; make mistakes and use Backspace.</li>
-        <li>Toggle <b>Headless</b> / <b>Proxy</b> / <b>Lang mismatch</b> to see <b>Bot Context</b> change.</li>
+        <li>Toggle <b>Headless</b> / <b>Proxy</b> / <b>Lang mismatch</b>.</li>
+        <li>Use a high amount (e.g., 25000) to trigger step-up.</li>
       </ul>
     </div>
   </div>
@@ -57,8 +63,10 @@
   </div>
 
   <script src="/telemetry.js"></script>
+  <script src="/ws-live.js"></script>
   <script>
-    attachPaymentForm('pay', { collectorBase: 'http://localhost:8080' });
+    attachPaymentForm('pay');
+    startLiveEvents('ws://localhost:8080/ws');
   </script>
 </body>
 </html>
