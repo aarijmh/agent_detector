@@ -37,8 +37,7 @@ async def collect(event: dict):
         }
         os.makedirs(os.path.dirname(EVENTS_FILE), exist_ok=True)
         with open(EVENTS_FILE, 'a') as f:
-            f.write(json.dumps(record) + '
-')
+            f.write(json.dumps(record) + '')
         return JSONResponse({ 'ok': True, **record })
     except Exception as e:
         return JSONResponse({ 'ok': False, 'error': str(e) }, status_code=500)
@@ -101,8 +100,7 @@ async def challenge(payload: dict):
     }
     os.makedirs(os.path.dirname(EVENTS_FILE), exist_ok=True)
     with open(EVENTS_FILE, 'a') as f:
-        f.write(json.dumps(record) + '
-')
+        f.write(json.dumps(record) + '')
 
     return JSONResponse({ 'passed': passed, 'metrics': record })
 
