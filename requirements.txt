@@ -1,0 +1,6 @@
+playwright
+websockets
+numpy
+scikit-learn
+matplotlib
+seaborn

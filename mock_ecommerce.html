@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mock Store</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .product { border: 1px solid #ccc; padding: 10px; margin: 10px; display: inline-block; }
+        button { padding: 10px; margin: 5px; }
+        input { padding: 5px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Mock Ecommerce Store</h1>
+    
+    <div id="login-section">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="products" style="display:none;">
+        <h2>Products</h2>
+        <div class="product">
+            <h3>Laptop</h3>
+            <p>$999</p>
+            <button onclick="addToCart('laptop')">Add to Cart</button>
+        </div>
+        <div class="product">
+            <h3>Phone</h3>
+            <p>$599</p>
+            <button onclick="addToCart('phone')">Add to Cart</button>
+        </div>
+    </div>
+
+    <div id="cart" style="display:none;">
+        <h2>Cart</h2>
+        <div id="cart-items"></div>
+        <button onclick="checkout()">Checkout</button>
+    </div>
+
+    <script>
+        let cart = [];
+        
+        function login() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('products').style.display = 'block';
+        }
+        
+        function addToCart(item) {
+            cart.push(item);
+            document.getElementById('cart').style.display = 'block';
+            document.getElementById('cart-items').innerHTML = cart.join(', ');
+        }
+        
+        function checkout() {
+            alert('Order placed!');
+        }
+    </script>
+</body>
+</html>

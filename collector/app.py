@@ -73,8 +73,8 @@ async def collect(event: dict):
         }
         os.makedirs(os.path.dirname(EVENTS_FILE), exist_ok=True)
         with open(EVENTS_FILE, 'a') as f:
-            f.write(json.dumps(record) + '
-')
+            f.write(json.dumps(record) + '')
+            f.flush(); os.fsync(f.fileno())
         await ws_manager.broadcast(record)
         return JSONResponse({ 'ok': True, **record })
     except Exception as e:
@@ -93,6 +93,7 @@ def _nearest_dist(p, samples):
 @app.post('/challenge')
 async def challenge(payload: dict):
     ts = payload.get('ts')
+    session_id = payload.get('session_id')
     trail = payload.get('trail', [])
     flags = payload.get('env_flags') or {}
     ps = payload.get('path_spec') or {}
@@ -123,19 +124,24 @@ async def challenge(payload: dict):
 
     passed = (median_dev <= 12.0) and (tremor >= 0.2)
 
+    # Downsample trail for replay storage
+    trail_sample = [{ 'x': p['x'], 'y': p['y'] } for i,p in enumerate(trail) if i % 4 == 0][:800]
+
     record = {
         'kind': 'challenge',
         'ts': ts,
-        'session_id': payload.get('session_id'),
+        'session_id': session_id,
         'adherence_px_median': round(median_dev,2),
         'tremor': round(tremor,3),
         'flags': flags,
-        'passed': passed
+        'passed': passed,
+        'path_spec': ps,
+        'trail_sample': trail_sample
     }
     os.makedirs(os.path.dirname(EVENTS_FILE), exist_ok=True)
     with open(EVENTS_FILE, 'a') as f:
-        f.write(json.dumps(record) + '
-')
+        f.write(json.dumps(record) + '')
+        f.flush(); os.fsync(f.fileno())
     await ws_manager.broadcast(record)
     return JSONResponse({ 'passed': passed, 'metrics': record })
 
