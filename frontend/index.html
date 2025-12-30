@@ -34,7 +34,7 @@
       <div class="card">
         <h3>Live Events (WebSocket)</h3>
         <div id="live" class="live"></div>
-        <p class="muted">Connecting to <code>ws://localhost:8080/ws</code> …</p>
+        <p class="muted">Connecting to <code>ws://localhost:8081/ws</code> …</p>
       </div>
     </div>
 
@@ -63,11 +63,11 @@
     </div>
   </div>
 
-  <script src="/telemetry.js"></script>
-  <script src="/ws-live.js"></script>
+  <script src="/telemetry.js?v=2"></script>
+  <script src="/ws-live.js?v=2"></script>
   <script>
     attachPaymentForm('pay');
-    startLiveEvents('ws://localhost:8080/ws');
+    startLiveEvents('ws://localhost:8081/ws');
   </script>
 </body>
 </html>

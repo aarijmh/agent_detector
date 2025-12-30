@@ -20,7 +20,7 @@ services:
       - POLICY_SVC=http://policy_svc:8000
       - EVENTS_FILE=/data/events.jsonl
     ports:
-      - "8080:8000"
+      - "8081:8000"
     volumes:
       - data:/data
     depends_on:

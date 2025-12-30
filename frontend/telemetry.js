@@ -59,7 +59,7 @@
         modal.msg.textContent = 'Checking…';
         try {
           const payload = { session_id: sessionId, ts: new Date().toISOString(), path_spec: {start: modal.path.start, end: modal.path.end, c1: modal.path.c1, c2: modal.path.c2}, trail: modal.points, env_flags: flags() };
-          const res = await postJSON('http://localhost:8080/challenge', payload);
+          const res = await postJSON('http://localhost:8081/challenge', payload);
           modal.msg.textContent = res.passed ? 'Passed ✅' : 'Failed ❌';
           const decEl = document.getElementById('decision');
           if (decEl) decEl.textContent = res.passed ? 'Action: allow (post-challenge)' : 'Action: deny (post-challenge)';
@@ -70,5 +70,42 @@
     draw();
   }
 
-  window.attachPaymentForm = function(formId){ const form = document.getElementById(formId); form.addEventListener('submit', async (e) => { e.preventDefault(); const formData = Object.fromEntries(new FormData(form).entries()); const snap = { session_id: sessionId, ts: new Date().toISOString(), channel: 'web', env: {...env, flags: flags()}, behavior: { mouse: mouse.slice(-800), keys: keys.slice(-400), paste_count: window.__pasteCount || 0 }, journey: { amount: formData.amount, beneficiary: formData.beneficiary, new_beneficiary: true } }; try{ const res = await postJSON('http://localhost:8080/collect', snap); const dec = res.decision || {}; const el = document.getElementById('decision'); el.textContent = `Action: ${dec.action}  |  Reasons: ${(dec.reasons||[]).join(', ')}`; if (dec.action === 'step_up_behavior_challenge'){ await openChallenge(); } else if (dec.action === 'step_up_webauthn'){ alert('Step-Up suggested: WebAuthn (placeholder in local demo)'); } else { alert('Submitted! Action: '+dec.action+' — Check Dashboard http://localhost:8501'); form.reset(); } } catch(err){ alert('Error: '+err.message); } }); };
+  window.attachPaymentForm = function(formId){ 
+    const form = document.getElementById(formId); 
+    form.addEventListener('submit', async (e) => { 
+      e.preventDefault(); 
+      const formData = Object.fromEntries(new FormData(form).entries()); 
+      const snap = { 
+        session_id: sessionId, 
+        ts: new Date().toISOString(), 
+        channel: 'web', 
+        env: {...env, flags: flags()}, 
+        behavior: { mouse: mouse.slice(-800), keys: keys.slice(-400), paste_count: window.__pasteCount || 0 }, 
+        journey: { amount: formData.amount, beneficiary: formData.beneficiary, new_beneficiary: true } 
+      }; 
+      try{ 
+        const res = await postJSON('http://localhost:8081/collect', snap); 
+        console.log('Response:', res);
+        const dec = res.decision || {}; 
+        const el = document.getElementById('decision'); 
+        if (!dec.action) { 
+          el.textContent = 'Error: No action in response'; 
+          console.error('Response:', res); 
+          return; 
+        } 
+        el.textContent = `Action: ${dec.action}  |  Reasons: ${(dec.reasons||[]).join(', ')}`; 
+        if (dec.action === 'step_up_behavior_challenge'){ 
+          await openChallenge(); 
+        } else if (dec.action === 'step_up_webauthn'){ 
+          alert('Step-Up suggested: WebAuthn (placeholder in local demo)'); 
+        } else { 
+          alert('Submitted! Action: '+dec.action+' — Check Dashboard http://localhost:8501'); 
+          form.reset(); 
+        } 
+      } catch(err){ 
+        console.error('Submit error:', err); 
+        alert('Error: '+err.message); 
+      } 
+    }); 
+  };
 })();
